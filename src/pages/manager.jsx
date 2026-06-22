@@ -17,6 +17,15 @@ const ManagerPage = () => {
 
     useEffect(function() {
         (async () => {
+            const data = await (await fetch("http://localhost:3000/api/me.php")).json();
+            if(!data.logged_in) {
+                location.href = "./login";
+            }
+        })();
+    }, []);
+
+    useEffect(function() {
+        (async () => {
             const data = await (await fetch("http://localhost:3000/api/get_articles.php")).json();
             setArticles(data);
         })();
@@ -72,11 +81,16 @@ const ManagerPage = () => {
 
         if(!ok) return;
 
-        fetch("http://localhost:3000/api/delete_article", {
+        const data = new URLSearchParams({
+            id
+        });
+
+        fetch("http://localhost:3000/api/delete_article.php", {
             method: "POST",
             headers: {
-                
-            }
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: data
         });
     }
 
