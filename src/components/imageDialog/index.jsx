@@ -13,7 +13,7 @@ export default function ImageDialog({ file, onClose }) {
         }
 
         const img = new Image();
-        img.src = `./files/${file}`;
+        img.src = `http://localhost:3000/uploads/${file}`;
 
         img.onload = () => {
             const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -56,7 +56,6 @@ export default function ImageDialog({ file, onClose }) {
             }}
         >
             <button
-                className="btn-close"
                 id="closeBtn"
                 aria-label="Close"
                 onClick={() => {
@@ -67,7 +66,7 @@ export default function ImageDialog({ file, onClose }) {
             <img
                 ref={imgRef}
                 id="image"
-                src={file ? `./files/${file}` : ""}
+                src={file ? `http://localhost:3000/uploads/${file}` : ""}
                 alt=""
             />
         </dialog>

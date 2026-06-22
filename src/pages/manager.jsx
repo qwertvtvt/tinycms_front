@@ -1,14 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 
 import ImageDialog from "../components/imageDialog";
+import { useConfirm } from "../provider/ConfirmProvider"
 
 const ManagerPage = () => {
+    const confirm = useConfirm();
+
     const [ isOpen, setIsOpen ] = useState(false);
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
 
     const [ articles, setArticles ] = useState([]);
     const [ openedImages, setImages ] = useState([]);
+
+    const [ selectedFile, setSelectedFile ] = useState(null);
 
     useEffect(function() {
         (async () => {
@@ -59,8 +64,20 @@ const ManagerPage = () => {
         console.log(`Edit Button Clicked: ${id}`);
     }
 
-    function handleDeleteButton(id) {
-        console.log(`Delete Button Clicked: ${id}`);
+    async function handleDeleteButton(id) {
+        const ok = await confirm({
+            title: "確認",
+            message: "本当に削除しますか？"
+        });
+
+        if(!ok) return;
+
+        fetch("http://localhost:3000/api/delete_article", {
+            method: "POST",
+            headers: {
+                
+            }
+        });
     }
 
     function handleImageButton(id) {
@@ -121,7 +138,11 @@ const ManagerPage = () => {
                                     {openedImages.includes(article.id) && (
                                         <div className="flex">
                                             {article.images.map((image, index) => (
-                                                <img key={index} src={"http://localhost:3000/uploads/" + image} style={{ width: (1 / article.images.length * 100)+"%" }} />
+                                                <img key={index}
+                                                    src={"http://localhost:3000/uploads/" + image}
+                                                    style={{ width: (1 / article.images.length * 100)+"%", cursor: "pointer" }}
+                                                    onClick={() => setSelectedFile(image)}
+                                                />
                                             ))}
                                         </div>
                                     )}
@@ -136,7 +157,7 @@ const ManagerPage = () => {
                                     編集
                                 </button>
                                 <button
-                                    className="inline-flex h-9 items-center justify-center rounded-md bg-rose-600 px-3 font-medium text-neutral-50 hover:bg-red-800 cursor-pointer"
+                                    className="inline-flex h-9 items-center justify-center rounded-md bg-rose-600 px-3 font-medium text-neutral-50 hover:bg-red-800 cursor-pointer ml-1"
                                     onClick={(() => handleDeleteButton(article.id))}
                                 >
                                     削除
@@ -147,10 +168,10 @@ const ManagerPage = () => {
                 </div>
             </div>
 
-            <dialog id="imageDialog">
-                <button className="btn-close" aria-label="Close" />
-                <img id="image" />
-            </dialog>
+            <ImageDialog
+                file={selectedFile}
+                onClose={() => setSelectedFile(null)}
+            />
         </div>
     );
 }
