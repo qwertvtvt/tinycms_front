@@ -17,7 +17,9 @@ const LoginPage = () => {
             credentials: "include"
         })).json();
 
-        console.log(result);
+        if(result.success) {
+            location.href = "./manager";
+        }
     }
 
     return (
@@ -28,50 +30,44 @@ const LoginPage = () => {
                 </div>
 
                 <div
-                    className="p-10 mt-13 bg-neutral-200/90"
+                    className="p-10 mt-13 bg-neutral-50"
                     style={{
                         textAlign: "left",
                         borderRadius: "15px"
                     }}
                 >
                     <label className="select-none ms-2 text-sm font-medium text-heading">
-                        ユーザー名<br />
                         <input
                             type="text"
                             style={{
-                                borderRadius: "5px",
-                                fontSize: "1.5rem",
-                                margin: "5px",
-                                padding: "2px",
-                                backgroundColor: "white"
+                                fontSize: "1.5rem"
                             }}
+                            className="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base leading-6 text-gray-900 placeholder:text-gray-500 shadow-sm transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-100"
                             value={inputUsername}
                             onChange={(event) => setInputUsername(event.target.value)}
+                            placeholder="ユーザー名"
                         />
                     </label>
                     <br />
                     <label className="select-none ms-2 text-sm font-medium text-heading">
-                        パスワード
                         <input
                             type={inputType ? "password" : "text"}
                             style={{
-                                borderRadius: "5px",
-                                fontSize: "1.5rem",
-                                margin: "5px",
-                                padding: "2px",
-                                backgroundColor: "white"
+                                fontSize: "1.5rem"
                             }}
+                            className="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base leading-6 text-gray-900 placeholder:text-gray-500 shadow-sm transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-100"
                             value={inputPassword}
                             onChange={(event) => setInputPassword(event.target.value)}
+                            placeholder="パスワード"
                         />
                     </label>
                     <br />
                     <label
-                        className="select-none ms-2 text-sm font-medium text-heading"
+                        className="inline-flex items-center gap-2"
                     >
                         <input
                             type="checkbox"
-                            className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+                            className="h-4 w-4 rounded border-gray-400 text-blue-600 transition-colors focus:ring-4 focus:ring-blue-500/25 focus:ring-offset-0"
                             onChange={() => { setType(!inputType) }}
                         />
                         パスワードを表示

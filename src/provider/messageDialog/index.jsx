@@ -6,6 +6,7 @@ export default function MessageDialog({
     title,
     message,
     onClose,
+    type
 }) {
     const dialogRef = useRef(null);
 
@@ -72,18 +73,20 @@ export default function MessageDialog({
                         gap: "12px",
                     }}
                 >
-                    <button
-                        onClick={() => onClose(false)}
-                        style={{
-                            padding: "8px 16px",
-                            border: "1px solid #ccc",
-                            borderRadius: "6px",
-                            backgroundColor: "#fff",
-                            cursor: "pointer",
-                        }}
-                    >
-                        キャンセル
-                    </button>
+                    {type !== "alert" ? (
+                        <button
+                            onClick={() => onClose(false)}
+                            style={{
+                                padding: "8px 16px",
+                                border: "1px solid #ccc",
+                                borderRadius: "6px",
+                                backgroundColor: "#fff",
+                                cursor: "pointer",
+                            }}
+                        >
+                            キャンセル
+                        </button>
+                    ) : (<></>)}
 
                     <button
                         onClick={() => onClose(true)}

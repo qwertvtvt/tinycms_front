@@ -13,13 +13,14 @@ export function ConfirmProvider({ children }) {
 
     const resolverRef = useRef(null);
 
-    const confirm = ({ title, message }) => {
+    const confirm = ({ title, message, type }) => {
         return new Promise((resolve) => {
             resolverRef.current = resolve;
 
             setDialog({
                 title,
                 message,
+                type
             });
         });
     };
@@ -40,6 +41,7 @@ export function ConfirmProvider({ children }) {
                 title={dialog?.title}
                 message={dialog?.message}
                 onClose={handleClose}
+                type={dialog?.type}
             />
         </ConfirmContext.Provider>
     );

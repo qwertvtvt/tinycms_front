@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
+import { NavLink } from "react-router-dom";
+
 import ImageDialog from "../components/imageDialog";
 import { useConfirm } from "../provider/ConfirmProvider"
 
@@ -17,18 +19,22 @@ const ManagerPage = () => {
 
     useEffect(function() {
         (async () => {
-            const data = await (await fetch("http://localhost:3000/api/me.php")).json();
+            const data = await (await fetch("http://localhost:3000/api/me.php", {
+                credentials: "include"
+            })).json();
             if(!data.logged_in) {
                 location.href = "./login";
             }
         })();
     }, []);
 
+    const loadArticles = async () => {
+        const data = await (await fetch("http://localhost:3000/api/get_articles.php")).json();
+        setArticles(data);
+    }
+
     useEffect(function() {
-        (async () => {
-            const data = await (await fetch("http://localhost:3000/api/get_articles.php")).json();
-            setArticles(data);
-        })();
+        loadArticles();
     }, []);
 
     useEffect(() => {
@@ -59,7 +65,7 @@ const ManagerPage = () => {
             window.removeEventListener("touchstart", touchStart);
             window.removeEventListener("touchend", touchEnd);
         };
-    });
+    }, []);
 
     useEffect(function() {
         console.log(articles);
@@ -90,8 +96,11 @@ const ManagerPage = () => {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: data
+            body: data,
+            credentials: "include"
         });
+
+        loadArticles();
     }
 
     function handleImageButton(id) {
@@ -121,6 +130,23 @@ const ManagerPage = () => {
                     <button onClick={() => setIsOpen(false)} className="text-2xl p-2 md:hidden">✕</button>
                 </div>
                 <br />
+                <button
+                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                >
+                    <NavLink to="/">
+                        ホームへ戻る
+                    </NavLink>
+                </button><br />
+                <br />
+                <hr />
+                <br />
+                <button
+                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                >
+                    <NavLink to="/add">
+                        お知らせを追加する
+                    </NavLink>
+                </button>
             </div>
             <div className="flex-1 w-2/3 bg-gray-400 overflow-y-auto flex-col p-2 md:m-[20px] md:ml-[0px] md:p-[10px]">
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
