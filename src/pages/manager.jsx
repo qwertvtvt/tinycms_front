@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import ImageDialog from "../components/imageDialog";
 import { useConfirm } from "../provider/ConfirmProvider"
 
 const ManagerPage = () => {
     const confirm = useConfirm();
+    const navigate = useNavigate();
 
     const [ isOpen, setIsOpen ] = useState(false);
     const touchStartX = useRef(0);
@@ -74,10 +75,6 @@ const ManagerPage = () => {
     useEffect(function() {
         console.log(openedImages);
     }, [openedImages]);
-
-    function handleEditButton(id) {
-        console.log(`Edit Button Clicked: ${id}`);
-    }
 
     async function handleDeleteButton(id) {
         const ok = await confirm({
@@ -160,7 +157,7 @@ const ManagerPage = () => {
                 </div>
                 <br />
                 <div className="pt-13">
-                    {articles && articles.map((article) => (
+                    {articles.length > 0 ? articles.map((article) => (
                         <div key={article.id} className="mb-1 p-2 bg-white rounded shadow mb-5">
                             <span className='text-lg'>{article.title}</span> | <small>{new Date(article.post_at).toLocaleString()}</small>
                             <hr />
@@ -192,7 +189,13 @@ const ManagerPage = () => {
                             <div className="p-[7px] pb-0 pl-0">
                                 <button
                                     className="inline-flex h-9 items-center justify-center rounded-md bg-indigo-600 px-3 font-medium text-neutral-50 hover:bg-blue-800 cursor-pointer"
-                                    onClick={(() => handleEditButton(article.id))}
+                                    onClick={() => {
+                                        navigate("/edit", {
+                                            state: {
+                                                article
+                                            }
+                                        });
+                                    }}
                                 >
                                     編集
                                 </button>
@@ -204,7 +207,24 @@ const ManagerPage = () => {
                                 </button>
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div
+                            className="p-10 mt-15 bg-neutral-50"
+                            style={{
+                                textAlign: "center",
+                                borderRadius: "15px"
+                            }}
+                        >
+                            <h2 className="text-xl m-3">お知らせはまだありません</h2>
+                            <button
+                                className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                            >
+                                <NavLink to="/add">
+                                    お知らせを追加する
+                                </NavLink>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 

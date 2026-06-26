@@ -6,6 +6,7 @@ import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import ManagerPage from "./pages/manager";
 import AddPage from "./pages/add";
+import EditPage from "./pages/edit";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/manager" element={<ManagerPage />} />
           <Route path="/add" element={<AddPage />} />
+          <Route path="/edit" element={<EditPage />} />
         </Routes>
       </BrowserRouter>
     </>

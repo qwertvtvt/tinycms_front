@@ -18,6 +18,10 @@ export default function MessageDialog({
         }
     }, [open]);
 
+    function nl2br(str = "") {
+        return str.replace(/\r\n|\n\r|\r|\n/g, "<br />");
+    }
+
     return (
         <dialog
             id="messageDialog"
@@ -62,9 +66,10 @@ export default function MessageDialog({
                         lineHeight: "1.5",
                         color: "#555",
                     }}
-                >
-                    {message}
-                </p>
+                    dangerouslySetInnerHTML={{
+                        __html: nl2br(message)
+                    }}
+                />
 
                 <div
                     style={{

@@ -1,84 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 
-import { NavLink } from "react-router-dom";
+const EditPage = () => {
+    const location = useLocation();
 
-import { useConfirm } from "../provider/ConfirmProvider"
-
-const AddPage = () => {
-    const confirm = useConfirm();
-
-    const [ inputTitle, setInputTitle ] = useState("");
-    const [ inputContent, setInputContent ] = useState("");
-    const [ selectedFiles, setSelectedFiles ] = useState([]);
+    const [ inputTitle, setInputTitle ] = useState(location.state?.article.title ?? "");
+    const [ inputContent, setInputContent ] = useState(location.state?.article.content ?? "");
 
     const [ isOpen, setIsOpen ] = useState(false);
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
-
-    const handleSubmit = async () => {
-        const formData = new FormData();
-        
-        formData.append("title", inputTitle);
-        formData.append("content", inputContent);
-
-        selectedFiles.forEach((file) => {
-            formData.append("images[]", file)
-        });
-
-        try {
-            const response = await fetch("http://localhost:3000/api/post_article.php", {
-                method: "POST",
-                body: formData,
-                credentials: "include"
-            });
-
-            const data = await response.json();
-
-            if(response.ok || data.success) {
-                location.href = "/manager";
-                return;
-            } else {
-                if(data.code == 4) {
-                    await confirm({
-                        title: "エラー",
-                        message: `ログインしていません (${data.code})`,
-                        type: "alert"
-                    });
-                } else if(data.code == 3) {
-                    await confirm({ 
-                        title: "エラー",
-                        message: `データエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
-                        type: "alert"
-                    });
-                } else if(data.code == 2) {
-                    await confirm({
-                        title: "エラー",
-                        message: `タイトルと本文をすべて入力してください (${data.code})`,
-                        type: "alert"
-                    });
-                } else if(data.code == 1) {
-                    await confirm({
-                        title: "エラー",
-                        message: `プロトコルエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
-                        type: "alert"
-                    })
-                } else {
-                    await confirm({
-                        title: "エラー",
-                        message: `不明なエラー:\n${data}`,
-                        type: "alert"
-                    });
-                }
-            }
-        } catch (error) {
-            console.log("エラー:", error);
-            await confirm({
-                title: "エラー",
-                message: `通信エラーが発生しました:\n${error}`,
-                type: "alert"
-            })
-        }
-    }
 
     useEffect(() => {
         const touchStart = (e) => {
@@ -147,6 +78,7 @@ const AddPage = () => {
                     </NavLink>
                 </button>
             </div>
+
             <div className="flex-1 w-2/3 bg-gray-400 overflow-y-auto flex-col p-2 md:m-[20px] md:ml-[0px] md:p-[10px]">
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
                     <button
@@ -155,7 +87,7 @@ const AddPage = () => {
                     >
                         ☰
                     </button>
-                    <h1 className="text-xl">お知らせ追加</h1>
+                    <h1 className="text-xl">お知らせ編集</h1>
                 </div>
 
                 <div
@@ -190,34 +122,13 @@ const AddPage = () => {
                         />
                     </label>
                     <br />
-                    <label className="select-none ms-2 text-sm font-medium text-heading">
-                        画像<br />
-                        <input
-                            type="file"
-                            className="block w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm
-                                        file:mr-4 file:border-0 file:border-r file:border-gray-300
-                                        file:bg-gray-100 file:px-3 file:py-2
-                                        file:text-sm file:font-normal file:text-gray-700
-                                        hover:file:bg-gray-200
-                                        focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/25
-                                        disabled:cursor-not-allowed disabled:opacity-50"
-                            multiple
-                            onChange={(event) => {
-                                if(event.target.files) {
-                                    setSelectedFiles(Array.from(event.target.files));
-                                }
-                            }}
-                        />
-                    </label>
-                    (画像は後で追加・削除・変更できません)<br />
-                    <br />
 
                     <div style={{ textAlign: "center" }}>
                         <button
                             className="inline-flex h-9 items-center justify-center rounded-md bg-blue-500 px-3 font-medium text-neutral-50 hover:bg-blue-800 cursor-pointer"
-                            onClick={handleSubmit}
+                            //onClick={}
                         >
-                            投稿
+                            完了
                         </button>
                     </div>
                 </div>
@@ -226,4 +137,4 @@ const AddPage = () => {
     );
 }
 
-export default AddPage;
+export default EditPage;
