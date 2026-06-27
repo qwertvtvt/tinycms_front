@@ -18,7 +18,7 @@ const LoginPage = () => {
         })).json();
 
         if(result.success) {
-            location.href = "./manager";
+            location.href = "/manager";
         }
     }
 

@@ -108,6 +108,10 @@ const ManagerPage = () => {
         }
     }
 
+    function nl2br(str = "") {
+        return str.replace(/\r\n|\n\r|\r|\n/g, "<br />");
+    }
+
     return (
         <div className="flex h-[100dvh] bg-gray-400">
             {isOpen && (
@@ -162,7 +166,11 @@ const ManagerPage = () => {
                             <span className='text-lg'>{article.title}</span> | <small>{new Date(article.post_at).toLocaleString()}</small>
                             <hr />
                             <br />
-                            {article.content}<br />
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: nl2br(article.content)
+                                }}
+                            />
                             <br />
                             {article.has_images == 1 && (
                                 <>
@@ -174,13 +182,16 @@ const ManagerPage = () => {
                                     </button>
                                     {openedImages.includes(article.id) && (
                                         <div className="flex">
-                                            {article.images.map((image, index) => (
-                                                <img key={index}
-                                                    src={"http://localhost:3000/uploads/" + image}
-                                                    style={{ width: (1 / article.images.length * 100)+"%", cursor: "pointer" }}
-                                                    onClick={() => setSelectedFile(image)}
-                                                />
-                                            ))}
+                                            {article.images
+                                                .filter(image => image)
+                                                .map((image, index) => (
+                                                    <img key={index}
+                                                        src={`http://localhost:3000/uploads/${image}`}
+                                                        style={{ width: (1 / article.images.length * 100)+"%", cursor: "pointer" }}
+                                                        onClick={() => setSelectedFile(image)}
+                                                    />
+                                                ))
+                                            }
                                         </div>
                                     )}
                                 </>

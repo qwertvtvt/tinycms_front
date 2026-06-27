@@ -1,11 +1,19 @@
 import { useState, useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 const EditPage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
-    const [ inputTitle, setInputTitle ] = useState(location.state?.article.title ?? "");
-    const [ inputContent, setInputContent ] = useState(location.state?.article.content ?? "");
+    const articleData = location.state?.article;
+    useEffect(() => {
+        if(!articleData) {
+            navigate("/manager");
+        }
+    }, [articleData]);
+
+    const [ inputTitle, setInputTitle ] = useState(articleData?.title);
+    const [ inputContent, setInputContent ] = useState(articleData?.content);
 
     const [ isOpen, setIsOpen ] = useState(false);
     const touchStartX = useRef(0);
@@ -40,6 +48,68 @@ const EditPage = () => {
             window.removeEventListener("touchend", touchEnd);
         };
     }, []);
+
+    const handleSubmit = async () => {
+        const formData = new FormData();
+
+        formData.append("id", articleData.id);
+        formData.append("title", inputTitle);
+        formData.append("content", inputContent);
+
+        try {
+            const response = await fetch("http://localhost:3000/api/edit_article.php", {
+                method: "POST",
+                body: formData,
+                credentials: "include"
+            });
+
+            const data = await response.json();
+
+            if(response.ok || data.success) {
+                navigate("/manager");
+                return;
+            } else {
+                if(data.code == 4) {
+                    await confirm({
+                        title: "エラー",
+                        message: `ログインしていません (${data.code})`,
+                        type: "alert"
+                    });
+                } else if(data.code == 3) {
+                    await confirm({ 
+                        title: "エラー",
+                        message: `データエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
+                        type: "alert"
+                    });
+                } else if(data.code == 2) {
+                    await confirm({
+                        title: "エラー",
+                        message: `タイトルと本文をすべて入力してください (${data.code})`,
+                        type: "alert"
+                    });
+                } else if(data.code == 1) {
+                    await confirm({
+                        title: "エラー",
+                        message: `プロトコルエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
+                        type: "alert"
+                    })
+                } else {
+                    await confirm({
+                        title: "エラー",
+                        message: `不明なエラー:\n${data}`,
+                        type: "alert"
+                    });
+                }
+            }
+        } catch (error) {
+            console.log("エラー:", error);
+            await confirm({
+                title: "エラー",
+                message: `通信エラーが発生しました:\n${error}`,
+                type: "alert"
+            });
+        }
+    }
 
     return (
         <div className="flex h-[100dvh] bg-gray-400">
@@ -118,6 +188,7 @@ const EditPage = () => {
                             }}
                             className="block w-full h-[100px] rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base leading-6 text-gray-900 placeholder:text-gray-500 shadow-sm transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-100"
                             placeholder="本文"
+                            value={inputContent}
                             onChange={(event) => setInputContent(event.target.value)}
                         />
                     </label>
@@ -126,7 +197,7 @@ const EditPage = () => {
                     <div style={{ textAlign: "center" }}>
                         <button
                             className="inline-flex h-9 items-center justify-center rounded-md bg-blue-500 px-3 font-medium text-neutral-50 hover:bg-blue-800 cursor-pointer"
-                            //onClick={}
+                            onClick={handleSubmit}
                         >
                             完了
                         </button>

@@ -4,7 +4,7 @@ import {
     useRef,
     useState,
 } from "react";
-import MessageDialog from "./MessageDialog";
+import MessageDialog from "./messageDialog";
 
 const ConfirmContext = createContext(null);
 

@@ -76,7 +76,7 @@ const AddPage = () => {
                 title: "エラー",
                 message: `通信エラーが発生しました:\n${error}`,
                 type: "alert"
-            })
+            });
         }
     }
 

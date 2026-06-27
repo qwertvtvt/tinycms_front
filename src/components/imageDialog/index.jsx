@@ -66,7 +66,7 @@ export default function ImageDialog({ file, onClose }) {
             <img
                 ref={imgRef}
                 id="image"
-                src={file ? `http://localhost:3000/uploads/${file}` : ""}
+                src={file ? `http://localhost:3000/uploads/${file}` : null}
                 alt=""
             />
         </dialog>
