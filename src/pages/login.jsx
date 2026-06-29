@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useConfirm } from "../provider/ConfirmProvider";
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+    const confirm = useConfirm();
+
     const [ inputType, setType ] = useState(true);
 
     const [ inputUsername, setInputUsername ] = useState("");
@@ -11,14 +16,42 @@ const LoginPage = () => {
         formData.append("username", inputUsername);
         formData.append("password", inputPassword)
 
-        const result = await (await fetch("http://localhost:3000/api/login.php", {
+        const response = await fetch("http://localhost:3000/api/login.php", {
             method: "POST",
             body: formData,
             credentials: "include"
-        })).json();
+        });
 
-        if(result.success) {
-            location.href = "/manager";
+        const data = await response.json();
+
+        if(response.ok && data.success) {
+            navigate("/manager");
+        } else {
+            if(data.code == 1) {
+                await confirm({
+                    title: "エラー",
+                    message: `プロトコルエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
+                    type: "alert"
+                })
+            } else if(data.code == 2) {
+                await confirm({ 
+                    title: "エラー",
+                    message: `データエラー\n長良クリエイトの担当者にお問い合わせしてください (${data.code})`,
+                    type: "alert"
+                });
+            } else if(data.code == 3) {
+                await confirm({ 
+                    title: "エラー",
+                    message: `パスワード または ユーザー名が違います`,
+                    type: "alert"
+                });
+            } else {
+                await confirm({
+                    title: "エラー",
+                    message: `不明なエラー:\n${data}`,
+                    type: "alert"
+                });
+            }
         }
     }
 
@@ -78,7 +111,11 @@ const LoginPage = () => {
                         <button
                             className="inline-flex h-9 items-center justify-center rounded-md bg-blue-500 px-3 font-medium text-neutral-50 hover:bg-blue-800 cursor-pointer"
                             onClick={handleLogin}
-                        >ログイン</button>
+                        >ログイン</button><br />
+                        <br />
+                        <div className="text-blue-600 underline">
+                            <NavLink to="/register">アカウント作成</NavLink>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -79,7 +79,7 @@ const ManagerPage = () => {
     async function handleDeleteButton(id) {
         const ok = await confirm({
             title: "確認",
-            message: "本当に削除しますか？"
+            message: "本当に削除しますか？\n削除すると復元できません"
         });
 
         if(!ok) return;

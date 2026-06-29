@@ -34,7 +34,7 @@ const AddPage = () => {
 
             const data = await response.json();
 
-            if(response.ok || data.success) {
+            if(response.ok && data.success) {
                 location.href = "/manager";
                 return;
             } else {
