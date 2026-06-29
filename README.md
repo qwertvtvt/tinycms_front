@@ -1,18 +1,29 @@
-# React + Vite
+# TinyCMS フロントエンド
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Webサイトのお知らせ・ブログを管理する画面です。記事の作成、編集、削除、画像アップロードが可能です。
 
-Currently, two official plugins are available:
+## セットアップ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+`http://localhost:5173` でアクセスできます。
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 環境設定
 
-Note: This will impact Vite dev & build performances.
+`.env.development` でバックエンドのURLを設定してください：
 
-## Expanding the ESLint configuration
+```env
+VITE_API_BASE=http://localhost:3000
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ページ一覧
+
+- `/` - ホーム（記事一覧）
+- `/login` - ログイン
+- `/register` - 新規登録
+- `/manager` - 管理画面
+- `/add` - 記事作成
+- `/edit` - 記事編集
