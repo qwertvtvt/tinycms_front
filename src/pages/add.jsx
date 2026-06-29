@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useConfirm } from "../provider/ConfirmProvider";
 
-import { NavLink } from "react-router-dom";
-
-import { useConfirm } from "../provider/ConfirmProvider"
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const AddPage = () => {
+    const navigate = useNavigate();
     const confirm = useConfirm();
 
     const [ inputTitle, setInputTitle ] = useState("");
@@ -14,6 +15,17 @@ const AddPage = () => {
     const [ isOpen, setIsOpen ] = useState(false);
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
+
+    useEffect(function() {
+        (async () => {
+            const data = await (await fetch(`${API_BASE}/api/me.php`, {
+                credentials: "include"
+            })).json();
+            if(!data.logged_in) {
+                navigate("/login");
+            }
+        })();
+    }, []);
 
     const handleSubmit = async () => {
         const formData = new FormData();
@@ -26,7 +38,7 @@ const AddPage = () => {
         });
 
         try {
-            const response = await fetch("http://localhost:3000/api/post_article.php", {
+            const response = await fetch(`${API_BASE}/api/post_article.php`, {
                 method: "POST",
                 body: formData,
                 credentials: "include"
@@ -35,7 +47,7 @@ const AddPage = () => {
             const data = await response.json();
 
             if(response.ok && data.success) {
-                location.href = "/manager";
+                navigate("/manager");
                 return;
             } else {
                 if(data.code == 4) {
@@ -114,7 +126,7 @@ const AddPage = () => {
         <div className="flex h-[100dvh] bg-gray-400">
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-60 md:hidden"
+                    className="fixed inset-0 bg-black/50 z-55"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -122,36 +134,36 @@ const AddPage = () => {
             <div className={`
                 fixed inset-y-0 left-0 z-100 w-3/4 max-w-sm bg-gray-100 p-4 transition-transform duration-300 ease-in-out transform
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
-                md:relative md:translate-x-0 md:w-1/3 md:m-[20px] md:p-[10px] overflow-y-auto
+                overflow-y-auto
             `}>
                 <div className="flex justify-between items-center mb-4">
                     <h1 className='text-3xl'>メニュー</h1>
-                    <button onClick={() => setIsOpen(false)} className="text-2xl p-2 md:hidden">✕</button>
+                    <button onClick={() => setIsOpen(false)} className="text-2xl p-2">✕</button>
                 </div>
                 <br />
-                <button
-                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
-                >
-                    <NavLink to="/">
+                <NavLink to="/">
+                    <button
+                        className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                    >
                         ホームへ戻る
-                    </NavLink>
-                </button><br />
+                    </button>
+                </NavLink><br />
                 <br />
                 <hr />
                 <br />
-                <button
-                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
-                >
-                    <NavLink to="/manager">
+                <NavLink to="/manager">
+                    <button
+                        className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                    >
                         お知らせを管理する
-                    </NavLink>
-                </button>
+                    </button>
+                </NavLink>
             </div>
             <div className="flex-1 w-2/3 bg-gray-400 overflow-y-auto flex-col p-2 md:m-[20px] md:ml-[0px] md:p-[10px]">
-                <div className="fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
+                <div className="md:flex md:justify-center md:pl-[40%] md:pr-[40%] fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="md:hidden p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200"
                     >
                         ☰
                     </button>
@@ -159,7 +171,7 @@ const AddPage = () => {
                 </div>
 
                 <div
-                    className="p-10 mt-15 bg-neutral-50"
+                    className="md:w-[600px] md:m-auto md:mt-15 p-10 mt-15 bg-neutral-50"
                     style={{
                         textAlign: "left",
                         borderRadius: "15px"

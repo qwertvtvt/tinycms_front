@@ -5,6 +5,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import ImageDialog from "../components/imageDialog";
 import { useConfirm } from "../provider/ConfirmProvider"
 
+const API_BASE = import.meta.env.VITE_API_BASE;
+
 const ManagerPage = () => {
     const confirm = useConfirm();
     const navigate = useNavigate();
@@ -20,17 +22,17 @@ const ManagerPage = () => {
 
     useEffect(function() {
         (async () => {
-            const data = await (await fetch("http://localhost:3000/api/me.php", {
+            const data = await (await fetch(`${API_BASE}/api/me.php`, {
                 credentials: "include"
             })).json();
             if(!data.logged_in) {
-                location.href = "./login";
+                navigate("/login");
             }
         })();
     }, []);
 
     const loadArticles = async () => {
-        const data = await (await fetch("http://localhost:3000/api/get_articles.php")).json();
+        const data = await (await fetch(`${API_BASE}/api/get_articles.php`)).json();
         setArticles(data);
     }
 
@@ -67,14 +69,6 @@ const ManagerPage = () => {
             window.removeEventListener("touchend", touchEnd);
         };
     }, []);
-
-    useEffect(function() {
-        console.log(articles);
-    }, [articles]);
-
-    useEffect(function() {
-        console.log(openedImages);
-    }, [openedImages]);
 
     async function handleDeleteButton(id) {
         const ok = await confirm({
@@ -116,53 +110,53 @@ const ManagerPage = () => {
         <div className="flex h-[100dvh] bg-gray-400">
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-60 md:hidden"
+                    className="fixed inset-0 bg-black/50 z-55"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
             <div className={`
-                fixed inset-y-0 left-0 z-100 w-3/4 max-w-sm bg-gray-100 p-4 transition-transform duration-300 ease-in-out transform
+                fixed inset-y-0 left-0 z-60 w-3/4 max-w-sm bg-gray-100 p-4 transition-transform duration-300 ease-in-out transform
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
-                md:relative md:translate-x-0 md:w-1/3 md:m-[20px] md:p-[10px] overflow-y-auto
+                overflow-y-auto
             `}>
                 <div className="flex justify-between items-center mb-4">
                     <h1 className='text-3xl'>メニュー</h1>
-                    <button onClick={() => setIsOpen(false)} className="text-2xl p-2 md:hidden">✕</button>
-                </div>
+                    <button onClick={() => setIsOpen(false)} className="text-2xl p-2">✕</button>
+                </div>  
                 <br />
-                <button
-                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
-                >
-                    <NavLink to="/">
+                <NavLink to="/">
+                    <button
+                        className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                    >
                         ホームへ戻る
-                    </NavLink>
-                </button><br />
+                    </button>
+                </NavLink><br />
                 <br />
                 <hr />
                 <br />
-                <button
-                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
-                >
-                    <NavLink to="/add">
+                <NavLink to="/add">
+                    <button
+                        className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                    >
                         お知らせを追加する
-                    </NavLink>
-                </button>
+                    </button>
+                </NavLink>
             </div>
             <div className="flex-1 w-2/3 bg-gray-400 overflow-y-auto flex-col p-2 md:m-[20px] md:ml-[0px] md:p-[10px]">
-                <div className="fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
+                <div className="md:flex md:justify-center md:pl-[40%] md:pr-[40%] fixed top-0 left-0 right-0 z-50 flex items-center p-[10px] gap-2 m-0 bg-neutral-100">
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="md:hidden p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200"
                     >
                         ☰
                     </button>
-                    <h1 className="text-xl">お知らせ一覧</h1>
+                    <h1 className="text-xl md:ml-[20px]">お知らせ一覧</h1>
                 </div>
                 <br />
                 <div className="pt-13">
                     {articles.length > 0 ? articles.map((article) => (
-                        <div key={article.id} className="mb-1 p-2 bg-white rounded shadow mb-5">
+                        <div key={article.id} className="md:w-[600px] md:m-auto md:mb-5 p-2 bg-white rounded shadow mb-5">
                             <span className='text-lg'>{article.title}</span> | <small>{new Date(article.post_at).toLocaleString()}</small>
                             <hr />
                             <br />
@@ -220,20 +214,20 @@ const ManagerPage = () => {
                         </div>
                     )) : (
                         <div
-                            className="p-10 mt-15 bg-neutral-50"
+                            className="md:w-[600px] md:m-auto p-10 mt-15 bg-neutral-50"
                             style={{
                                 textAlign: "center",
                                 borderRadius: "15px"
                             }}
                         >
                             <h2 className="text-xl m-3">お知らせはまだありません</h2>
-                            <button
-                                className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
-                            >
-                                <NavLink to="/add">
+                            <NavLink to="/add">
+                                <button
+                                    className="w-1/1 h-[70px] bg-gray-500 text-neutral-50 text-xl font-extrabold rounded-lg"
+                                >
                                     お知らせを追加する
-                                </NavLink>
-                            </button>
+                                </button>
+                            </NavLink>
                         </div>
                     )}
                 </div>

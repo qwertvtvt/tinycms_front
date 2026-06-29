@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { useConfirm } from "../provider/ConfirmProvider";
 
+const API_BASE = import.meta.env.VITE_API_BASE;
+
 const LoginPage = () => {
     const navigate = useNavigate();
     const confirm = useConfirm();
@@ -16,7 +18,7 @@ const LoginPage = () => {
         formData.append("username", inputUsername);
         formData.append("password", inputPassword)
 
-        const response = await fetch("http://localhost:3000/api/login.php", {
+        const response = await fetch(`${API_BASE}/api/login.php`, {
             method: "POST",
             body: formData,
             credentials: "include"
@@ -25,7 +27,7 @@ const LoginPage = () => {
         const data = await response.json();
 
         if(response.ok && data.success) {
-            navigate("/manager");
+            navigate("/");
         } else {
             if(data.code == 1) {
                 await confirm({
@@ -63,7 +65,7 @@ const LoginPage = () => {
                 </div>
 
                 <div
-                    className="p-10 mt-13 bg-neutral-50"
+                    className="md:w-[600px] md:m-auto md:mt-15 p-10 mt-13 bg-neutral-50"
                     style={{
                         textAlign: "left",
                         borderRadius: "15px"
