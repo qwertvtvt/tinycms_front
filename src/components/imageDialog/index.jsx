@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import "./style.css"
+import "./style.css";
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function ImageDialog({ file, onClose }) {
     const dialogRef = useRef(null);
@@ -13,7 +15,7 @@ export default function ImageDialog({ file, onClose }) {
         }
 
         const img = new Image();
-        img.src = `http://localhost:3000/uploads/${file}`;
+        img.src = `${API_BASE}/uploads/${file}`;
 
         img.onload = () => {
             const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -66,7 +68,7 @@ export default function ImageDialog({ file, onClose }) {
             <img
                 ref={imgRef}
                 id="image"
-                src={file ? `http://localhost:3000/uploads/${file}` : null}
+                src={file ? `${API_BASE}/uploads/${file}` : null}
                 alt=""
             />
         </dialog>

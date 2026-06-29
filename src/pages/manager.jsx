@@ -82,7 +82,7 @@ const ManagerPage = () => {
             id
         });
 
-        fetch("http://localhost:3000/api/delete_article.php", {
+        fetch(`${API_BASE}/api/delete_article.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -180,7 +180,7 @@ const ManagerPage = () => {
                                                 .filter(image => image)
                                                 .map((image, index) => (
                                                     <img key={index}
-                                                        src={`http://localhost:3000/uploads/${image}`}
+                                                        src={`${API_BASE}/uploads/${image}`}
                                                         style={{ width: (1 / article.images.length * 100)+"%", cursor: "pointer" }}
                                                         onClick={() => setSelectedFile(image)}
                                                     />
